@@ -63,7 +63,7 @@ ul { list-style: none; }
   line-height: 1.2;
 }
 .navbar__logo-img {
-  height: 46px;
+  height: 58px;
   width: auto;
 }
 .navbar__logo span {
@@ -517,7 +517,7 @@ footer {
   margin-bottom: 12px;
 }
 .footer__logo-img {
-  height: 56px;
+  height: 80px;
   width: auto;
   display: block;
   margin-bottom: 10px;
