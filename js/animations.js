@@ -64,4 +64,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll('[data-count]').forEach(el => counterObserver.observe(el));
 
+  // ── 4. HAMBURGER MENU ─────────────────────────────────────────────────
+  const toggle = document.querySelector('.navbar__toggle');
+  const links  = document.querySelector('.navbar__links');
+  if (toggle && links) {
+    toggle.addEventListener('click', () => {
+      links.classList.toggle('open');
+    });
+    links.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', () => links.classList.remove('open'));
+    });
+  }
+
+  // ── 5. FORMULIER AFHANDELING (Formspree AJAX) ─────────────────────────
+  document.querySelectorAll('form').forEach(form => {
+    if (!form.action || form.action.includes('#')) return;
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn = form.querySelector('[type="submit"]');
+      const origHtml = btn.innerHTML;
+      btn.innerHTML = 'Versturen…';
+      btn.classList.add('btn--loading');
+      btn.disabled = true;
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { Accept: 'application/json' }
+        });
+        if (res.ok) {
+          form.innerHTML = `
+            <div class="form-success">
+              <div class="form-success__icon">✅</div>
+              <h4>Verstuurd!</h4>
+              <p>Bedankt voor je bericht. Wij nemen zo snel mogelijk contact met je op — doorgaans binnen 1 uur op werkdagen.</p>
+            </div>`;
+        } else {
+          throw new Error('server');
+        }
+      } catch {
+        btn.innerHTML = origHtml;
+        btn.classList.remove('btn--loading');
+        btn.disabled = false;
+        alert('Er is iets misgegaan. Probeer het opnieuw of bel ons direct op 0598 744 299.');
+      }
+    });
+  });
+
 });
