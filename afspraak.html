@@ -77,7 +77,7 @@
       <!-- BOOKING FORMULIER -->
       <div style="background:var(--white); border-radius:var(--radius); padding:44px; box-shadow:var(--shadow-lg);">
         <h3 style="font-size:1.35rem; font-weight:700; color:var(--navy); margin-bottom:28px;">Jouw afspraak</h3>
-        <form action="#" method="POST">
+        <form id="afspraakForm" action="#" method="POST">
 
           <!-- PERSOONLIJKE GEGEVENS -->
           <p style="font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--muted); margin-bottom:16px; margin-top:4px;">Jouw gegevens</p>
@@ -265,5 +265,43 @@
 </footer>
 
 <script src="js/animations.js"></script>
+<script>
+  (function () {
+    var form = document.getElementById('afspraakForm');
+    if (!form) return;
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      var btn = form.querySelector('button[type="submit"]');
+      var origText = btn.textContent;
+      btn.textContent = 'Bezig met verzenden…';
+      btn.disabled = true;
+
+      try {
+        var res = await fetch('https://formspree.io/info@beblitz.nl', {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (res.ok) {
+          form.innerHTML =
+            '<div style="text-align:center;padding:48px 16px;">' +
+            '<div style="font-size:3rem;margin-bottom:16px;">✅</div>' +
+            '<h3 style="color:var(--navy);font-size:1.4rem;margin-bottom:12px;">Afspraak aangevraagd!</h3>' +
+            '<p style="color:var(--muted);max-width:360px;margin:0 auto;">We nemen zo snel mogelijk contact met je op — binnen 1 uur op werkdagen.</p>' +
+            '</div>';
+        } else {
+          throw new Error('server error');
+        }
+      } catch (err) {
+        btn.textContent = origText;
+        btn.disabled = false;
+        alert('Er is iets misgegaan. Probeer het opnieuw of bel ons op 0598 744 299.');
+      }
+    });
+  })();
+</script>
 </body>
 </html>
